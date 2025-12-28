@@ -1,0 +1,560 @@
+/* Custom styles for the homepage */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.hero-left {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+.video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(70, 10, 120, 0.4), rgba(120, 40, 180, 0.4));
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.hero-text h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 15px;
+    height: calc(100% - 10px);
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.category-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.category-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 15px;
+    text-align: center;
+}
+
+.category-item:hover .category-overlay {
+    opacity: 1;
+}
+
+.category-item:hover img {
+    transform: scale(1.05);
+}
+
+.category-options {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.category-options a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+    font-size: 14px;
+}
+
+.category-options a:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;
+}
+
+.product-carousel .item {
+    padding: 0 15px;
+}
+
+.section-heading {
+    margin-bottom: 30px;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+/* Fix header overlap issue */
+.header-area {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Product carousel adjustments */
+.owl-carousel .owl-stage {
+    display: flex;
+}
+
+.owl-carousel .owl-item {
+    display: flex;
+    flex: 1 0 auto;
+}
+
+/* Footer styling */
+.social-links a {
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #007bff;
+}
+
+.explore-btn {
+    background-color: #ced4da;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-block;
+}
+
+.explore-btn:hover {
+    background-color: #aaaaaa;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Center the carousel items */
+.men-item-carousel,
+.women-item-carousel,
+.kid-item-carousel {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Discount price styles for homepage */
+.price-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 5px 0;
+}
+.original-price {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+.discount-price {
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.discount-badge {
+    background: #dc3545;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+.featured-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffc107;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.7em;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* Brand Slider Section */
+.brand-slider-section {
+    padding: 60px 0;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.logo-cloud-container {
+    /* This creates the fade effect on left and right */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.logo-track {
+    display: flex;
+    align-items: center;
+    gap: 4rem; /* Gap between logos */
+    animation: infinite-scroll 40s linear infinite;
+    width: max-content;
+}
+
+/* Hover pauses the animation */
+.logo-track:hover {
+    animation-play-state: paused;
+}
+
+/* New: Style for the link wrapping the logo */
+.brand-link {
+    display: inline-block;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.brand-logo {
+    height: 40px; /* Adjust height as needed */
+    width: auto;
+    object-fit: contain;
+    /* Make logos black/dark by default */
+    filter: grayscale(100%) brightness(0);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect: Bring back color and opacity */
+.brand-link:hover .brand-logo {
+    opacity: 1;
+    filter: grayscale(0%) brightness(1); 
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+@keyframes infinite-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%); /* Moves exactly half the width */
+    }
+}
+
+/* NEW FIX: Add margin to the top when scrolling to this ID to prevent header overlap */
+#brands {
+    scroll-margin-top: 100px; /* Adjust based on your header height */
+}
+
+/* ============================================
+   MOBILE CATEGORY CARD STYLES
+   ============================================ */
+@media (max-width: 991px) {
+    /* Show category title at bottom of card */
+    .category-item {
+        display: flex;
+        align-items: flex-end;
+    }
+    
+    .category-overlay {
+        opacity: 1 !important; /* Force overlay to be visible on mobile */
+        background: none !important; /* REMOVED: Dark overlay/filter */
+        justify-content: flex-end;
+        padding-bottom: 20px;
+    }
+    
+    .category-overlay h4 {
+        color: #ffffff94;
+        font-size: 1.5rem;
+        margin-bottom: -15px;
+        text-align: center;
+        width: 100%;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7); /* Added text shadow for better visibility */
+    }
+    
+    /* Hide the sunglasses/eyeglasses options on mobile */
+    .category-options {
+        display: none !important;
+    }
+    
+    /* Hide the description text */
+    .category-overlay p {
+        display: none;
+    }
+    
+    /* Ensure the default link covers entire card */
+    .category-default-link {
+        z-index: 10;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .hero-section {
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .hero-left {
+        height: 100vh;
+    }
+    
+    .category-grid {
+        height: 100vh;
+    }
+    
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .men-item-carousel,
+    .women-item-carousel,
+    .kid-item-carousel {
+        padding: 0;
+    }
+
+    .owl-carousel .owl-item {
+        justify-content: center;
+    }
+    
+    .owl-carousel .item {
+        text-align: center;
+        width: 100%;
+    }
+
+    /* === HEADER MENU REMOVAL & DROP UP LOGIC === */
+    
+    /* 1. Remove the header menu trigger (hamburger) */
+    .header-area .menu-trigger {
+        display: none !important;
+    }
+
+    /* 2. Style the main nav to "Drop Up" from bottom */
+    .header-area .main-nav .nav {
+        position: fixed !important;
+        bottom: 65px !important; /* FIX: Changed from 70px to 65px to eliminate the gap with the 65px tall mobile-bottom-nav */
+        left: 0;
+        width: 100%;
+        top: auto !important; /* Override template default */
+        background: #f7f7f7;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+        border-radius: 15px 15px 0 0;
+        padding: 20px 0;
+        transform-origin: bottom;
+        z-index: 9998;
+        max-height: 60vh;
+        overflow-y: auto;
+        /* Ensure it's hidden by default, JS will toggle it */
+    }
+
+    /* Adjust link styling in the drop-up menu */
+    .header-area .main-nav .nav li {
+        border-bottom: 1px solid #f1f1f1;
+    }
+    
+    .header-area .main-nav .nav li:last-child {
+        border-bottom: none;
+    }
+    
+    .header-area .main-nav .nav li a {
+        height: 50px !important;
+        line-height: 50px !important;
+        padding-left: 20px !important;
+        color: #1e1e1e !important;
+        font-weight: 500;
+    }
+}
+
+@media (max-width: 768px) {
+    .men-item-carousel,
+    .women-item-carousel,
+    .kid-item-carousel {
+        padding: 0;
+    }
+}
+
+/* =========================================
+   BOTTOM MOBILE NAVIGATION BAR
+   ========================================= */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+    justify-content: space-around;
+    padding: 10px 0;
+    height: 65px;
+    border-top: 1px solid #eee;
+}
+
+.mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #888; /* Softer gray by default */
+    font-size: 10px;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.mobile-bottom-nav .nav-item i {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #888;
+    transition: color 0.3s ease;
+}
+
+/* Active State & Hover - Darker/Black */
+.mobile-bottom-nav .nav-item:hover,
+.mobile-bottom-nav .nav-item.active {
+    color: #000;
+    font-weight: 600;
+}
+
+.mobile-bottom-nav .nav-item:hover i,
+.mobile-bottom-nav .nav-item.active i {
+    color: #000;
+}
+
+/* Show only on mobile screens */
+@media (max-width: 991px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+    
+    body {
+        padding-bottom: 65px;
+    }
+}
+/* Simpler Grid Approach */
+@media (max-width: 991px) {
+    .header-area .main-nav {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        width: 100%;
+    }
+    
+    /* Menu on left */
+    .header-area .main-nav .menu-trigger {
+        grid-column: 1;
+        justify-self: start;
+    }
+    
+    /* Logo in center */
+    .header-area .main-nav .logo {
+        grid-column: 2;
+        justify-self: center;
+    }
+    
+    /* Nav/cart on right */
+    .header-area .main-nav .nav {
+        grid-column: 3;
+        justify-self: end;
+    }
+    
+    /* Adjust logo size */
+    .header-area .main-nav .logo img {
+        height: 75px !important;
+        width: auto !important;
+    }
+}
+
+/* Invisible clickable overlay for category items */
+.category-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.category-default-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    text-decoration: none;
+}
+
+.category-options {
+    position: relative;
+    z-index: 3;
+}
+
+.category-options a {
+    position: relative;
+    z-index: 4;
+}

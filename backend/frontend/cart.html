@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JavaScript (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Hexashop - Shopping Cart</title>
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo-hexashop.css">
+    <link rel="stylesheet" href="assets/css/owl-carousel.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+    <link rel="stylesheet" href="assets/css/cart.css">
+
+
+    <style>
+        /* Custom banner for cart page - ADDED THIS */
+        .page-heading {
+    background-image: url('https://i.ibb.co/8nSbrmrt/cart.jpg') !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    margin: 10px 0 25px 0 !important; /* Space around */
+}
+    </style>
+</head>
+
+<body>
+    <!-- ***** Preloader Start ***** -->
+    <div id="preloader">
+        <div class="jumper">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <!-- ***** Preloader End ***** -->
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="index.html" class="logo">
+                            <img src="med/logo3.png" alt="Hexashop Logo" class="img-fluid" style="height: 75px; width: auto;">
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li class="scroll-to-section"><a href="index.html">Home</a></li>
+                            <li class="scroll-to-section"><a href="index.html#men">Men</a></li>
+                            <li class="scroll-to-section"><a href="index.html#women">Women</a></li>
+                            <li class="scroll-to-section"><a href="index.html#kids">Kids</a></li>
+                            <li class="submenu">
+                                <a href="javascript:;">Pages</a>
+                                <ul>
+                        <li><a href="index.html#brands" class="scroll-to-section">Our Brands</a></li>  
+                        <li><a href="tracking.html">Tracking/Order history</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                                </ul>
+                            </li>
+                            <li class="scroll-to-section"><a href="cart.html" class="active"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                        </ul>
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+
+    <!-- ***** Main Banner Area Start ***** -->
+    <div class="page-heading" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="inner-content">
+                        <h2>Shopping Cart</h2>
+                        <span>Review your items and proceed to checkout</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Main Banner Area End ***** -->
+
+    <!-- ***** Cart Section Starts ***** -->
+    <section class="cart-section">
+        <div class="container">
+            <div id="cart-content">
+                <!-- Cart content will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+    <!-- ***** Cart Section Ends ***** -->
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="checkout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Complete Your Order</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="alert-message" class="alert-message"></div>
+                
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter your last name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wilaya" class="form-label">Wilaya</label>
+                        <div class="select-wrapper">
+                            <select class="form-control" id="wilaya" required>
+                                <option value="" disabled selected>Select your wilaya</option>
+                                <option value="1">1 - Adrar</option>
+                                <option value="2">2 - Chlef</option>
+                                <option value="3">3 - Laghouat</option>
+                                <option value="4">4 - Oum El Bouaghi</option>
+                                <option value="5">5 - Batna</option>
+                                <option value="6">6 - Béjaïa</option>
+                                <option value="7">7 - Biskra</option>
+                                <option value="8">8 - Béchar</option>
+                                <option value="9">9 - Blida</option>
+                                <option value="10">10 - Bouira</option>
+                                <option value="11">11 - Tamanrasset</option>
+                                <option value="12">12 - Tébessa</option>
+                                <option value="13">13 - Tlemcen</option>
+                                <option value="14">14 - Tiaret</option>
+                                <option value="15">15 - Tizi Ouzou</option>
+                                <option value="16">16 - Algiers</option>
+                                <option value="17">17 - Djelfa</option>
+                                <option value="18">18 - Jijel</option>
+                                <option value="19">19 - Sétif</option>
+                                <option value="20">20 - Saïda</option>
+                                <option value="21">21 - Skikda</option>
+                                <option value="22">22 - Sidi Bel Abbès</option>
+                                <option value="23">23 - Annaba</option>
+                                <option value="24">24 - Guelma</option>
+                                <option value="25">25 - Constantine</option>
+                                <option value="26">26 - Médéa</option>
+                                <option value="27">27 - Mostaganem</option>
+                                <option value="28">28 - M'Sila</option>
+                                <option value="29">29 - Mascara</option>
+                                <option value="30">30 - Ouargla</option>
+                                <option value="31">31 - Oran</option>
+                                <option value="32">32 - El Bayadh</option>
+                                <option value="33">33 - Illizi</option>
+                                <option value="34">34 - Bordj Bou Arréridj</option>
+                                <option value="35">35 - Boumerdès</option>
+                                <option value="36">36 - El Tarf</option>
+                                <option value="37">37 - Tindouf</option>
+                                <option value="38">38 - Tissemsilt</option>
+                                <option value="39">39 - El Oued</option>
+                                <option value="40">40 - Khenchela</option>
+                                <option value="41">41 - Souk Ahras</option>
+                                <option value="42">42 - Tipaza</option>
+                                <option value="43">43 - Mila</option>
+                                <option value="44">44 - Aïn Defla</option>
+                                <option value="45">45 - Naâma</option>
+                                <option value="46">46 - Aïn Témouchent</option>
+                                <option value="47">47 - Ghardaïa</option>
+                                <option value="48">48 - Relizane</option>
+                                <option value="49">49 - Timimoun</option>
+                                <option value="50">50 - Bordj Badji Mokhtar</option>
+                                <option value="51">51 - Ouled Djellal</option>
+                                <option value="52">52 - Béni Abbès</option>
+                                <option value="53">53 - In Salah</option>
+                                <option value="54">54 - In Guezzam</option>
+                                <option value="55">55 - Touggourt</option>
+                                <option value="56">56 - Djanet</option>
+                                <option value="57">57 - El M'Ghair</option>
+                                <option value="58">58 - El Menia</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="3" placeholder="Enter your full address" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="confirm-btn">
+                        <i class="fa fa-check-circle me-2"></i>Confirm Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ***** Footer Start ***** -->
+    <footer style="background-color: #2a2a2a;" class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 d-flex flex-column align-items-center">
+                
+                <nav class="footer-nav mb-4 d-flex flex-wrap justify-content-center gap-4">
+                    <a href="index.html" class="text-white text-decoration-none px-2">Home</a>
+                    <a href="about.html" class="text-white text-decoration-none px-2">About</a>
+                    <a href="products.html" class="text-white text-decoration-none px-2">Products</a>
+                    <a href="contact.html" class="text-white text-decoration-none px-2">Contact</a>
+                </nav>
+
+                <div class="mb-4 d-flex gap-3">
+                    <a href="#" class="btn btn-outline-light rounded-circle footer-social-btn">
+                        <i class="fa-brands fa-facebook-f"></i>
+                        <span class="visually-hidden">Facebook</span>
+                    </a>
+                    <a href="https://www.instagram.com" class="btn btn-outline-light rounded-circle footer-social-btn">
+                        <i class="fa-brands fa-instagram"></i>
+                        <span class="visually-hidden">Instagram</span>
+                    </a>
+                    <a href="#" class="btn btn-outline-light rounded-circle footer-social-btn">
+                        <i class="fa-brands fa-tiktok"></i>
+                        <span class="visually-hidden">Tiktok</span>
+                    </a>
+                </div>
+
+                <div class="text-center">
+                    <p class="small text-white-50 mb-0">
+                        Copyright © 2023 Hexashop Co., Ltd. All Rights Reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <!-- Mobile Bottom Navigation Bar (SAME AS INDEX.HTML) -->
+    <div class="mobile-bottom-nav">
+        <!-- Home -->
+        <a href="index.html" class="nav-item">
+            <svg class="icon icon-home icon-sm" width="20" height="20" viewBox="0 0 20 20" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18.3337 14.1667V10.4538C18.3337 9.09868 18.3337 8.42113 18.1681 7.79394C18.006 7.17971 17.7284 6.602 17.35 6.09172C16.9637 5.57066 16.4346 5.1474 15.3764 4.30088L14.9979 3.99805L14.9979 3.99804C13.2143 2.57117 12.3225 1.85774 11.3335 1.58413C10.4611 1.34279 9.53956 1.34279 8.66717 1.58413C7.67815 1.85774 6.78636 2.57118 5.00277 3.99805L5.00276 3.99805L4.62423 4.30088C3.56607 5.1474 3.037 5.57066 2.65064 6.09172C2.27227 6.602 1.99461 7.17971 1.83251 7.79394C1.66699 8.42113 1.66699 9.09868 1.66699 10.4538V14.1667C1.66699 16.4679 3.53247 18.3333 5.83366 18.3333C6.75413 18.3333 7.50033 17.5871 7.50033 16.6667V13.3333C7.50033 11.9526 8.61961 10.8333 10.0003 10.8333C11.381 10.8333 12.5003 11.9526 12.5003 13.3333V16.6667C12.5003 17.5871 13.2465 18.3333 14.167 18.3333C16.4682 18.3333 18.3337 16.4679 18.3337 14.1667Z"/>
+            </svg>
+            <span>Home</span>
+        </a>
+        
+        <!-- Menu -->
+        <a href="javascript:void(0);" class="nav-item menu-trigger-bottom">
+            <svg class="icon icon-hamburger icon-sm" width="20" height="20" viewBox="0 0 21 20" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.2002 5H18.2002M3.2002 10H9.86686M3.2002 15H14.0335"/>
+            </svg>
+            <span>Menu</span>
+        </a>
+        
+        <!-- Shop -->
+        <a href="products.html" class="nav-item">
+            <svg class="icon icon-grid icon-sm" width="20" height="20" viewBox="0 0 21 20" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1.7666 4.8665C1.7666 3.7464 1.7666 3.18635 1.98459 2.75852C2.17634 2.3822 2.4823 2.07624 2.85862 1.88449C3.28644 1.6665 3.8465 1.6665 4.9666 1.6665H5.23327C6.35337 1.6665 6.91343 1.6665 7.34125 1.88449C7.71757 2.07624 8.02353 2.3822 8.21528 2.75852C8.43327 3.18635 8.43327 3.7464 8.43327 4.8665V5.13317C8.43327 6.25328 8.43327 6.81333 8.21528 7.24115C8.02353 7.61748 7.71757 7.92344 7.34125 8.11518C6.91343 8.33317 6.35337 8.33317 5.23327 8.33317H4.9666C3.8465 8.33317 3.28644 8.33317 2.85862 8.11518C2.4823 7.92344 2.17634 7.61748 1.98459 7.24115C1.7666 6.81333 1.7666 6.25328 1.7666 5.13317V4.8665Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.7666 4.8665C11.7666 3.7464 11.7666 3.18635 11.9846 2.75852C12.1763 2.3822 12.4823 2.07624 12.8586 1.88449C13.2864 1.6665 13.8465 1.6665 14.9666 1.6665H15.2333C16.3534 1.6665 16.9134 1.6665 17.3413 1.88449C17.7176 2.07624 18.0235 2.3822 18.2153 2.75852C18.4333 3.18635 18.4333 3.7464 18.4333 4.8665V5.13317C18.4333 6.25328 18.4333 6.81333 18.2153 7.24115C18.0235 7.61748 17.7176 7.92344 17.3413 8.11518C16.9134 8.33317 16.3534 8.33317 15.2333 8.33317H14.9666C13.8465 8.33317 13.2864 8.33317 12.8586 8.11518C12.4823 7.92344 12.1763 7.61748 11.9846 7.24115C11.7666 6.81333 11.7666 6.25328 11.7666 5.13317V4.8665Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1.7666 14.8665C1.7666 13.7464 1.7666 13.1863 1.98459 12.7585C2.17634 12.3822 2.4823 12.0762 2.85862 11.8845C3.28644 11.6665 3.8465 11.6665 4.9666 11.6665H5.23327C6.35337 11.6665 6.91343 11.6665 7.34125 11.8845C7.71757 12.0762 8.02353 12.3822 8.21528 12.7585C8.43327 13.1863 8.43327 13.7464 8.43327 14.8665V15.1332C8.43327 16.2533 8.43327 16.8133 8.21528 17.2412C8.02353 17.6175 7.71757 17.9234 7.34125 18.1152C6.91343 18.3332 6.35337 18.3332 5.23327 18.3332H4.9666C3.8465 18.3332 3.28644 18.3332 2.85862 18.1152C2.4823 17.9234 2.17634 17.6175 1.98459 17.2412C1.7666 16.8133 1.7666 16.2533 1.7666 15.1332V14.8665Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.7666 14.8665C11.7666 13.7464 11.7666 13.1863 11.9846 12.7585C12.1763 12.3822 12.4823 12.0762 12.8586 11.8845C13.2864 11.6665 13.8465 11.6665 14.9666 11.6665H15.2333C16.3534 11.6665 16.9134 11.6665 17.3413 11.8845C17.7176 12.0762 18.0235 12.3822 18.2153 12.7585C18.4333 13.1863 18.4333 13.7464 18.4333 14.8665V15.1332C18.4333 16.2533 18.4333 16.8133 18.2153 17.2412C18.0235 17.6175 17.7176 17.9234 17.3413 18.1152C16.9134 18.3332 16.3534 18.3332 15.2333 18.3332H14.9666C13.8465 18.3332 13.2864 18.3332 12.8586 18.1152C12.4823 17.9234 12.1763 17.6175 11.9846 17.2412C11.7666 16.8133 11.7666 16.2533 11.7666 15.1332V14.8665Z"/>
+            </svg>
+            <span>Shop</span>
+        </a>
+        
+        <!-- Cart -->
+        <a href="cart.html" class="nav-item active">
+            <svg class="icon icon-cart icon-sm" width="20" height="20" viewBox="0 0 20 20" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M1.66667 1.66667H3.33333L5.83333 11.6667H16.6667L18.3333 4.16667H5.83333M5.83333 15.8333C5.83333 16.7538 6.57953 17.5 7.5 17.5C8.42047 17.5 9.16667 16.7538 9.16667 15.8333C9.16667 14.9129 8.42047 14.1667 7.5 14.1667C6.57953 14.1667 5.83333 14.9129 5.83333 15.8333ZM14.1667 15.8333C14.1667 16.7538 14.9129 17.5 15.8333 17.5C16.7538 17.5 17.5 16.7538 17.5 15.8333C17.5 14.9129 16.7538 14.1667 15.8333 14.1667C14.9129 14.1667 14.1667 14.9129 14.1667 15.8333Z"/>
+            </svg>
+            <span>Cart</span>
+        </a>
+        
+        <!-- Tracking -->
+        <a href="tracking.html" class="nav-item">
+            <svg class="icon icon-tracking icon-sm" width="20" height="20" viewBox="0 0 20 20" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 18.3333C10 18.3333 17.5 12.5 17.5 8.33333C17.5 4.16667 14.1667 0.833333 10 0.833333C5.83333 0.833333 2.5 4.16667 2.5 8.33333C2.5 12.5 10 18.3333 10 18.3333Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 10.8333C11.3807 10.8333 12.5 9.71405 12.5 8.33333C12.5 6.95262 11.3807 5.83333 10 5.83333C8.61929 5.83333 7.5 6.95262 7.5 8.33333C7.5 9.71405 8.61929 10.8333 10 10.8333Z"/>
+            </svg>
+            <span>Tracking</span>
+        </a>
+    </div>
+
+    <!-- jQuery -->
+    <script src="assets/js/jquery-2.1.0.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="assets/js/popper.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <!-- Plugins -->
+    <script src="assets/js/owl-carousel.js"></script>
+    <script src="assets/js/accordions.js"></script>
+    <script src="assets/js/datepicker.js"></script>
+    <script src="assets/js/scrollreveal.min.js"></script>
+    <script src="assets/js/waypoints.min.js"></script>
+    <script src="assets/js/jquery.counterup.min.js"></script>
+    <script src="assets/js/imgfix.min.js"></script> 
+    <script src="assets/js/slick.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    <script src="assets/js/isotope.js"></script> 
+    
+    <!-- Global Init -->
+    <script src="assets/js/custom.js"></script>
+
+    <script>
+    // API Base URL
+    const API_BASE = '/api';
+    let appliedPromoCode = null;
+    let promoDiscountAmount = 0;
+    
+    function getCart() {
+        const cartData = localStorage.getItem('hexashop-cart');
+        console.log('Retrieved cart data:', cartData);
+        return cartData ? JSON.parse(cartData) : [];
+    }
+    
+    function saveCart(cart) {
+        localStorage.setItem('hexashop-cart', JSON.stringify(cart));
+        console.log('Saved cart:', cart);
+    }
+    
+    function updateCartCount() {
+        const cart = getCart();
+        const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+        const cartIcon = document.querySelector('.fa-shopping-cart');
+        
+        if (!cartIcon) {
+            console.log('Cart icon not found');
+            return;
+        }
+        
+        const existingBadge = cartIcon.parentElement.querySelector('.cart-badge');
+        if (existingBadge) {
+            existingBadge.remove();
+        }
+        
+        if (cartCount > 0) {
+            const badge = document.createElement('span');
+            badge.className = 'cart-badge';
+            badge.textContent = cartCount;
+            badge.style.cssText = `
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #ced4da;
+                color: white;
+                border-radius: 50%;
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            cartIcon.parentElement.style.position = 'relative';
+            cartIcon.parentElement.appendChild(badge);
+        }
+    }
+    
+    // Validate promo code with backend
+    async function validatePromoCode(code) {
+        try {
+            // Calculate subtotal to send to server
+            const cart = getCart();
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            
+            const response = await fetch(`${API_BASE}/cart/validate-promo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    promoCode: code,
+                    orderAmount: subtotal
+                })
+            });
+            
+            if (response.ok) {
+                return await response.json();
+            } else {
+                return { valid: false, message: 'Invalid promo code' };
+            }
+        } catch (error) {
+            console.error('Error validating promo code:', error);
+            return { valid: false, message: 'Error validating promo code' };
+        }
+    }
+    
+    function showPromoMessage(message, isSuccess = false) {
+        const existingMessage = document.querySelector('.promo-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        const promoContainer = document.querySelector('.promo-code');
+        const messageElement = document.createElement('div');
+        messageElement.className = `promo-message ${isSuccess ? 'text-success' : 'text-danger'}`;
+        messageElement.style.cssText = `
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: ${isSuccess ? '#d4edda' : '#f8d7da'};
+            border: 1px solid ${isSuccess ? '#c3e6cb' : '#f5c6cb'};
+            animation: fadeIn 0.3s ease-in;
+        `;
+        messageElement.textContent = message;
+        
+        if (!document.querySelector('#promo-animation')) {
+            const style = document.createElement('style');
+            style.id = 'promo-animation';
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+                .promo-error { animation: shake 0.3s ease-in-out; }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        if (!isSuccess) {
+            messageElement.classList.add('promo-error');
+        }
+        
+        promoContainer.parentNode.insertBefore(messageElement, promoContainer.nextSibling);
+        
+        setTimeout(() => {
+            if (messageElement.parentNode) {
+                messageElement.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => messageElement.remove(), 300);
+            }
+        }, 5000);
+    }
+    
+    async function applyPromoCode() {
+        const promoInput = document.querySelector('.promo-code input');
+        const code = promoInput.value.trim();
+        
+        if (!code) {
+            showPromoMessage('Please enter a promo code', false);
+            return;
+        }
+        
+        if (appliedPromoCode) {
+            showPromoMessage('A promo code has already been applied', false);
+            return;
+        }
+        
+        const result = await validatePromoCode(code);
+        
+        if (result.valid) {
+            appliedPromoCode = code.toUpperCase();
+            promoDiscountAmount = result.discount_amount;
+            showPromoMessage(result.message, true);
+            loadCart();
+            promoInput.value = '';
+            promoInput.disabled = true;
+        } else {
+            showPromoMessage(result.message, false);
+            promoInput.classList.add('promo-error');
+            setTimeout(() => promoInput.classList.remove('promo-error'), 300);
+        }
+    }
+    
+    function removePromoCode() {
+        appliedPromoCode = null;
+        promoDiscountAmount = 0;
+        const promoInput = document.querySelector('.promo-code input');
+        promoInput.disabled = false;
+        loadCart();
+        showPromoMessage('Promo code removed', false);
+    }
+    
+    function calculateDiscount(subtotal) {
+        if (appliedPromoCode) {
+            return promoDiscountAmount; // Use exact server-side calc
+        }
+        return 0;
+    }
+    
+    // NEW: Function to display price with discount support
+    function displayPrice(item) {
+        if (item.hasDiscount && item.originalPrice > item.price) {
+            const discountPercent = Math.round((1 - item.price / item.originalPrice) * 100);
+            return `
+                <div class="price-container">
+                    <span class="original-price">DA ${item.originalPrice.toLocaleString()}</span>
+                    <span class="discount-price">DA ${item.price.toLocaleString()}</span>
+                    <span class="discount-badge">-${discountPercent}%</span>
+                </div>
+            `;
+        } else {
+            return `DA ${item.price.toLocaleString()}`;
+        }
+    }
+    
+    // NEW: Function to calculate item total with discount display
+    function displayItemTotal(item) {
+        const itemTotal = item.price * item.quantity;
+        if (item.hasDiscount && item.originalPrice > item.price) {
+            const originalTotal = item.originalPrice * item.quantity;
+            const savings = originalTotal - itemTotal;
+            return `
+                <div>
+                    <div class="discount-price">DA ${itemTotal.toLocaleString()}</div>
+                    <div class="original-price" style="font-size: 0.8em;">DA ${originalTotal.toLocaleString()}</div>
+                    <div class="saving-text" style="font-size: 0.7em;">Saved: DA ${savings.toLocaleString()}</div>
+                </div>
+            `;
+        } else {
+            return `DA ${itemTotal.toLocaleString()}`;
+        }
+    }
+    
+        function loadCart() {
+        const cartContent = document.getElementById('cart-content');
+        const cart = getCart();
+        
+        console.log('Loading cart with items. Screen width:', window.innerWidth, 'Is mobile:', window.innerWidth <= 768);
+        
+        if (!cartContent) {
+            console.error('Cart content element not found');
+            return;
+        }
+        
+        if (cart.length === 0) {
+            cartContent.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                    <h3>Your cart is empty</h3>
+                    <p>Browse our collections and add some stylish eyewear to your cart!</p>
+                    <a href="products.html" class="explore-btn">Start Shopping</a>
+                </div>
+            `;
+            return;
+        }
+        
+        // Check if mobile
+        const isMobile = window.innerWidth <= 768;
+        
+        let cartItemsHTML = '';
+        let subtotal = 0;
+        let totalSavings = 0;
+        
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+            
+            // Calculate savings if item has discount
+            if (item.hasDiscount && item.originalPrice > item.price) {
+                const originalItemTotal = item.originalPrice * item.quantity;
+                totalSavings += (originalItemTotal - itemTotal);
+            }
+            
+            // Mobile layout
+            if (isMobile) {
+                // Determine price display for single item
+                let singlePriceDisplay = '';
+                if (item.hasDiscount && item.originalPrice > item.price) {
+                    singlePriceDisplay = `
+                        <div>
+                            <span style="text-decoration: line-through; color: #6c757d; font-size: 14px;">
+                                DA ${item.originalPrice.toLocaleString()}
+                            </span>
+                            <div style="color: #dc3545; font-weight: bold; font-size: 16px;">
+                                DA ${item.price.toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    singlePriceDisplay = `<div style="color: #2a2a2a; font-weight: bold; font-size: 16px;">DA ${item.price.toLocaleString()}</div>`;
+                }
+                
+                cartItemsHTML += `
+                    <div class="cart-item-card">
+                        <div class="product-row">
+                            <img src="${item.image}" alt="${item.name}" class="product-image">
+                            <div class="product-info">
+    <div class="product-title">${item.name}</div>
+    <div class="product-category">${item.category}</div>
+    <div class="product-type">${item.type}</div>
+    ${item.hasDiscount ? '<div style="color: #28a745; font-size: 12px; margin-top: 3px;">🎉 Special Offer!</div>' : ''}
+</div>
+                        </div>
+                        
+                        <div class="price-row">
+                            <span class="price-label">Price</span>
+                            ${singlePriceDisplay}
+                        </div>
+                        
+                        <div class="quantity-row">
+                            <span class="quantity-label">Quantity</span>
+                            <div class="quantity-controls-remove">
+                                <div class="quantity-buttons">
+                                    <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                                    <input type="text" class="qty-input" value="${item.quantity}" readonly>
+                                    <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                                </div>
+                                <button class="remove-icon-btn" onclick="removeFromCart(${index})" title="Remove item">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="total-row">
+                            <span class="total-label">Total</span>
+                            <span class="total-amount">DA ${itemTotal.toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Desktop layout (keep existing)
+                const displayColor = item.selectedColor || 'Not specified';
+                
+                cartItemsHTML += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="${item.image}" alt="${item.name}" class="cart-item-image me-3">
+                                <div class="cart-item-details">
+                                    <h5>${item.name}</h5>
+                                    <p>Category: ${item.category}</p>
+                                    <p>Type: ${item.type}</p>
+                                    <p>Color: ${displayColor}</p>
+                                    ${item.hasDiscount ? '<p class="saving-text" style="font-size: 0.8em; margin-top: 5px;">🎉 Special Discount Applied!</p>' : ''}
+                                </div>
+                            </div>
+                        </td>
+                        <td>${displayPrice(item)}</td>
+                        <td>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                                <input type="text" class="quantity-input" value="${item.quantity}" readonly>
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td>${displayItemTotal(item)}</td>
+                        <td>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+        
+        const discount = calculateDiscount(subtotal);
+        const total = subtotal - discount;
+        
+        const promoSection = appliedPromoCode ? 
+            `<div class="promo-code">
+                <input type="text" placeholder="Promo code applied: ${appliedPromoCode}" disabled>
+                <button onclick="removePromoCode()" style="background-color: #dc3545;">Remove</button>
+            </div>` :
+            `<div class="promo-code">
+                <input type="text" placeholder="Enter promo code">
+                <button onclick="applyPromoCode()">Apply</button>
+            </div>`;
+        
+        const savingsDisplay = totalSavings > 0 ? `
+            <div class="summary-row text-success">
+                <span>Total Savings</span>
+                <span>DA ${totalSavings.toLocaleString()}</span>
+            </div>
+        ` : '';
+        
+        // Mobile layout
+        if (isMobile) {
+            cartContent.innerHTML = `
+                <div class="mobile-cart-container">
+                    ${cartItemsHTML}
+                    
+                    <a href="products.html" class="continue-shopping">
+                        <i class="fa fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                    
+                    <div class="cart-summary">
+                        <h4 style="padding: 15px; margin: 0; border-bottom: 1px solid #eee;">Order Summary</h4>
+                        <div style="padding: 15px;">
+                            ${promoSection}
+                            
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>DA ${subtotal.toLocaleString()}</span>
+                            </div>
+                            
+                            ${savingsDisplay}
+                            
+                            <div class="summary-row ${appliedPromoCode ? 'text-success' : ''}">
+                                <span>Promo Discount ${appliedPromoCode ? `(${appliedPromoCode})` : ''}</span>
+                                <span>-DA ${discount.toLocaleString()}</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span>Free</span>
+                            </div>
+                            
+                            <div class="summary-row summary-total">
+                                <span>Total</span>
+                                <span>DA ${total.toLocaleString()}</span>
+                            </div>
+                            
+                            <button class="checkout-btn" onclick="openCheckoutModal()" style="margin-top: 15px;">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Desktop layout (existing)
+            cartContent.innerHTML = `
+                <div class="row">
+                    <div class="col-lg-8">
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${cartItemsHTML}
+                            </tbody>
+                        </table>
+                        
+                        <a href="products.html" class="continue-shopping">
+                            <i class="fa fa-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="cart-summary">
+                            <h4>Order Summary</h4>
+                            
+                            ${promoSection}
+                            
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>DA ${subtotal.toLocaleString()}</span>
+                            </div>
+                            
+                            ${savingsDisplay}
+                            
+                            <div class="summary-row ${appliedPromoCode ? 'text-success' : ''}">
+                                <span>Promo Discount ${appliedPromoCode ? `(${appliedPromoCode})` : ''}</span>
+                                <span>-DA ${discount.toLocaleString()}</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span>Free</span>
+                            </div>
+                            
+                            <div class="summary-row summary-total">
+                                <span>Total</span>
+                                <span>DA ${total.toLocaleString()}</span>
+                            </div>
+                            
+                            <button class="checkout-btn" onclick="openCheckoutModal()">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    function updateQuantity(index, change) {
+        const cart = getCart();
+        if (cart[index] && cart[index].quantity + change > 0) {
+            cart[index].quantity += change;
+            saveCart(cart);
+            loadCart();
+            updateCartCount();
+        }
+    }
+    
+    function removeFromCart(index) {
+        const cart = getCart();
+        if (cart[index]) {
+            cart.splice(index, 1);
+            saveCart(cart);
+            loadCart();
+            updateCartCount();
+        }
+    }
+    
+    // Submit cart order to backend
+    async function submitCartOrder(orderData) {
+        try {
+            const response = await fetch(`${API_BASE}/orders/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
+            
+            if (response.ok) {
+                return await response.json();
+            } else {
+                throw new Error('Failed to create order');
+            }
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            throw error;
+        }
+    }
+    
+    // Modal functionality
+    function openCheckoutModal() {
+        const cart = getCart();
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+        
+        const modal = document.getElementById('checkoutModal');
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeCheckoutModal() {
+        const modal = document.getElementById('checkoutModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    
+    function showAlert(message, type = 'success') {
+        const alertElement = document.getElementById('alert-message');
+        alertElement.textContent = message;
+        alertElement.className = `alert-message ${type === 'success' ? 'alert-success' : 'alert-error'}`;
+        alertElement.style.display = 'block';
+        
+        setTimeout(() => {
+            alertElement.style.display = 'none';
+        }, 5000);
+    }
+    
+    // Form submission for cart checkout
+    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const wilaya = document.getElementById('wilaya').value;
+        const address = document.getElementById('address').value;
+        
+        if (!firstName || !lastName || !phoneNumber || !wilaya || !address) {
+            showAlert('Please fill in all required fields', 'error');
+            return;
+        }
+        
+        const phoneRegex = /^[0-9+\-\s()]{10,}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            showAlert('Please enter a valid phone number', 'error');
+            return;
+        }
+        
+        const cart = getCart();
+        
+        // FIX: Send selected_color instead of color to match single-product.html behavior
+        const orderData = {
+            phoneNumber: phoneNumber,
+            customerName: `${firstName} ${lastName}`,
+            wilaya: wilaya,
+            address: address,
+            promoCode: appliedPromoCode, // Pass promo code
+            items: cart.map(item => ({
+                productId: item.id,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                color: item.color || 'black', // Keep for backward compatibility
+                image: item.image,
+                // FIX: Add selected_color field to match single-product.html order structure
+                selected_color: item.selectedColor || ''
+            }))
+        };
+            
+        const submitBtn = document.querySelector('.confirm-btn');
+        submitBtn.classList.add('success-animation');
+        
+        try {
+            const result = await submitCartOrder(orderData);
+            showAlert(`Order confirmed successfully! Order ID: ${result.orderId}. Your cart has been emptied. You will receive a confirmation call shortly.`);
+            
+            document.getElementById('checkout-form').reset();
+            
+            setTimeout(() => {
+                submitBtn.classList.remove('success-animation');
+            }, 1000);
+            
+            setTimeout(() => {
+                closeCheckoutModal();
+                // Empty the cart after successful order
+                localStorage.removeItem('hexashop-cart');
+                appliedPromoCode = null;
+                promoDiscountAmount = 0;
+                loadCart();
+                updateCartCount();
+            }, 3000);
+            
+        } catch (error) {
+            showAlert('Failed to create order. Please try again.', 'error');
+            submitBtn.classList.remove('success-animation');
+        }
+    });
+    
+    // Add animation to form inputs on focus
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.classList.add('input-animation');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.classList.remove('input-animation');
+        });
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('checkoutModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCheckoutModal();
+        }
+    });
+    
+    // Close modal when clicking close button
+    document.querySelector('.close-modal').addEventListener('click', closeCheckoutModal);
+    
+    // Add mobile bottom nav menu functionality
+    $(document).ready(function() {
+        $('.menu-trigger-bottom').click(function(e) {
+            e.preventDefault();
+            $('.header-area .menu-trigger').trigger('click');
+        });
+    });
+
+    // Add resize listener to update layout when screen size changes
+    window.addEventListener('resize', function() {
+        console.log('Screen resized to:', window.innerWidth);
+        loadCart();
+    });
+
+    // Also add orientation change listener for mobile devices
+    window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+            console.log('Orientation changed');
+            loadCart();
+        }, 100);
+    });
+
+    // Initialize cart on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Cart page loaded');
+        loadCart();
+        updateCartCount();
+    });
+</script>
+
+</body>
+
+</html>
