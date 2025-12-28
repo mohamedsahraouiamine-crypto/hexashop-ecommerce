@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexashop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container { padding: 20px; }
+        .stats-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .order-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; transition: all 0.3s ease; }
+        .product-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-confirmed { background-color: #d1ecf1; color: #0c5460; }
+        .status-shipped { background-color: #d1ecf1; color: #0c5460; }
+        .status-delivered { background-color: #d4edda; color: #155724; }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #2a2a2a;
+            color: white;
+            border-color: #2a2a2a;
+        }
+        .nav-tabs .nav-link {
+            color: #2a2a2a;
+            border: 1px solid #dee2e6;
+        }
+        .tab-content {
+            padding: 20px 0;
+        }
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .quantity-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .quantity-zero {
+            color: #dc3545;
+            font-weight: bold;
+            background-color: #f8d7da;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .promo-active { background-color: #d4edda; }
+        .promo-inactive { background-color: #f8d7da; }
+        .promo-expired { background-color: #fff3cd; }
+        .backup-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .backup-success { border-left: 4px solid #28a745; }
+        .backup-warning { border-left: 4px solid #ffc107; }
+        .backup-danger { border-left: 4px solid #dc3545; }
+        .discount-badge {
+            background: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .discount-price {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        /* NEW: Color selection styles */
+        .color-section {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        .color-item {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: white;
+        }
+        .color-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            border: 2px solid #dee2e6;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .color-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .color-images-preview {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .color-image-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        /* NEW: Featured star styles */
+        .featured-star {
+            color: #ffc107;
+            font-size: 1.2em;
+        }
+        .featured-star-btn:hover .featured-star {
+            transform: scale(1.2);
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="text-center">
+            <i class="fa fa-spinner fa-spin fa-3x"></i>
+            <p class="mt-3">Loading admin panel...</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand">Hexashop Admin Panel</span>
+            <button class="btn btn-outline-light btn-sm" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container admin-container">
+        <h2 class="mb-4">Admin Dashboard</h2>
+        
+        <!-- Stats Cards -->
+        <div class="row" id="stats-cards">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="total-orders">0</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="pending-orders">0</h3>
+                    <p>Pending Orders</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="total-revenue">DA 0</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <h3 id="total-products">0</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="true">
+                    <i class="fas fa-shopping-cart"></i> Order Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab" aria-controls="products" aria-selected="false">
+                    <i class="fas fa-glasses"></i> Product Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="promo-tab" data-bs-toggle="tab" data-bs-target="#promo" type="button" role="tab" aria-controls="promo" aria-selected="false">
+                    <i class="fas fa-tag"></i> Promo Code Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab" aria-controls="backup" aria-selected="false">
+                    <i class="fas fa-database"></i> Backup Management
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="adminTabsContent">
+            <!-- Orders Tab -->
+            <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Recent Orders</h4>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="loadOrders()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="orders-list">
+                    <div class="text-center">
+                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                        <p>Loading orders...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Product Management</h4>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadProducts()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="showAddProductModal()">
+                            <i class="fas fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                </div>
+                <div id="products-list">
+                    <div class="text-center">
+                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                        <p>Loading products...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Promo Codes Tab -->
+            <div class="tab-pane fade" id="promo" role="tabpanel" aria-labelledby="promo-tab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Promo Code Management</h4>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadPromoCodes()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="showAddPromoModal()">
+                            <i class="fas fa-plus"></i> Add Promo Code
+                        </button>
+                    </div>
+                </div>
+                <div id="promo-codes-list">
+                    <div class="text-center">
+                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                        <p>Loading promo codes...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Management Tab -->
+            <div class="tab-pane fade" id="backup" role="tabpanel" aria-labelledby="backup-tab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Database Backup Management</h4>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadBackups()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="createBackup()">
+                            <i class="fas fa-plus"></i> Create Backup
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Backup Actions -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="backup-card backup-success">
+                            <h5><i class="fas fa-database text-success"></i> Automatic Backups</h5>
+                            <p class="mb-1"><strong>Schedule:</strong> Every 30 minutes</p>
+                            <p class="mb-1"><strong>Retention:</strong> Last 96 backups (48 hours)</p>
+                            <p class="mb-0"><strong>Next Backup:</strong> <span id="next-backup-time">Soon</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="backup-card backup-warning">
+                            <h5><i class="fas fa-shield-alt text-warning"></i> Backup Status</h5>
+                            <p class="mb-1"><strong>Total Backups:</strong> <span id="total-backups">0</span></p>
+                            <p class="mb-1"><strong>Last Backup:</strong> <span id="last-backup-time">Never</span></p>
+                            <p class="mb-0"><strong>Storage Used:</strong> <span id="storage-used">0 MB</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="backup-card backup-danger">
+                            <h5><i class="fas fa-exclamation-triangle text-danger"></i> Quick Actions</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="createBackup()">
+                                    <i class="fas fa-save"></i> Create Manual Backup
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="cleanupBackups()">
+                                    <i class="fas fa-broom"></i> Cleanup Old Backups
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backups List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Available Backups</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="backups-list">
+                            <div class="text-center">
+                                <i class="fa fa-spinner fa-spin fa-2x"></i>
+                                <p>Loading backups...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Product ID *</label>
+                                    <input type="text" class="form-control" name="id" required maxlength="50">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Product Title *</label>
+                                    <input type="text" class="form-control" name="title" required maxlength="200">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price (DA) *</label>
+                                    <input type="number" class="form-control" name="price" step="0.01" min="0" required>
+                                </div>
+                                <!-- NEW: Discount Price Field -->
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Price (DA)</label>
+                                    <input type="number" class="form-control" name="discount_price" step="0.01" min="0" placeholder="Optional">
+                                    <small class="form-text text-muted">Set a discount price for special promotions</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Brand *</label>
+                                    <input type="text" class="form-control" name="brand" required maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category *</label>
+                                    <select class="form-select" name="model" required>
+                                        <option value="Men">Men</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Kids">Kids</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Type *</label>
+                                    <select class="form-select" name="type" required>
+                                        <option value="sunglasses">Sunglasses</option>
+                                        <option value="eyeglasses">Eyeglasses</option>
+                                    </select>
+                                </div>
+                                <!-- NEW: Discount Activation Fields -->
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" name="discount_active" id="addDiscountActive">
+                                    <label class="form-check-label" for="addDiscountActive">Activate Discount</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Start Date</label>
+                                    <input type="datetime-local" class="form-control" name="discount_start">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount End Date</label>
+                                    <input type="datetime-local" class="form-control" name="discount_end">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Shape</label>
+                                    <input type="text" class="form-control" name="frame_shape" maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Material</label>
+                                    <input type="text" class="form-control" name="frame_material" maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Color</label>
+                                    <input type="text" class="form-control" name="frame_color" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- NEW: Color Selection Section - NOW REQUIRED for stock management -->
+                        <div class="color-section">
+                            <h6>Color Selection *</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Number of Colors *</label>
+                                <input type="number" class="form-control" id="colorCount" name="color_count" min="1" max="10" value="1" onchange="updateColorFields()" required>
+                                <small class="form-text text-muted">Set the number of color options for this product. Each color must have stock quantity.</small>
+                            </div>
+                            <div id="colorFieldsContainer">
+                                <!-- Color fields will be dynamically generated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description *</label>
+                            <textarea class="form-control" name="description" rows="3" required maxlength="1000"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lenses</label>
+                            <input type="text" class="form-control" name="lenses" maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Protection</label>
+                            <input type="text" class="form-control" name="protection" maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dimensions</label>
+                            <input type="text" class="form-control" name="dimensions" maxlength="50">
+                        </div>
+                        <!-- NEW: Featured Product Field -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="is_featured" id="addIsFeatured">
+                            <label class="form-check-label" for="addIsFeatured">
+                                <i class="fas fa-star featured-star"></i> Feature this product on homepage
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-product-form">
+                        <input type="hidden" name="id" id="editProductId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Product Title *</label>
+                                    <input type="text" class="form-control" name="title" id="editProductTitle" required maxlength="200">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price (DA) *</label>
+                                    <input type="number" class="form-control" name="price" id="editProductPrice" step="0.01" min="0" required>
+                                </div>
+                                <!-- NEW: Discount Price Field -->
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Price (DA)</label>
+                                    <input type="number" class="form-control" name="discount_price" id="editProductDiscountPrice" step="0.01" min="0" placeholder="Optional">
+                                    <small class="form-text text-muted">Set a discount price for special promotions</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Brand *</label>
+                                    <input type="text" class="form-control" name="brand" id="editProductBrand" required maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category *</label>
+                                    <select class="form-select" name="model" id="editProductModel" required>
+                                        <option value="Men">Men</option>
+                                        <option value="Women">Women</option>
+                                        <option value="Kids">Kids</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Type *</label>
+                                    <select class="form-select" name="type" id="editProductType" required>
+                                        <option value="sunglasses">Sunglasses</option>
+                                        <option value="eyeglasses">Eyeglasses</option>
+                                    </select>
+                                </div>
+                                <!-- NEW: Discount Activation Fields -->
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" name="discount_active" id="editDiscountActive">
+                                    <label class="form-check-label" for="editDiscountActive">Activate Discount</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Start Date</label>
+                                    <input type="datetime-local" class="form-control" name="discount_start" id="editDiscountStart">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount End Date</label>
+                                    <input type="datetime-local" class="form-control" name="discount_end" id="editDiscountEnd">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Shape</label>
+                                    <input type="text" class="form-control" name="frame_shape" id="editProductFrameShape" maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Material</label>
+                                    <input type="text" class="form-control" name="frame_material" id="editProductFrameMaterial" maxlength="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Frame Color</label>
+                                    <input type="text" class="form-control" name="frame_color" id="editProductFrameColor" maxlength="100">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- NEW: Color Selection Section - NOW REQUIRED for stock management -->
+                        <div class="color-section">
+                            <h6>Color Selection *</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Number of Colors *</label>
+                                <input type="number" class="form-control" id="editColorCount" name="color_count" min="1" max="10" value="1" onchange="updateEditColorFields()" required>
+                                <small class="form-text text-muted">Set the number of color options for this product. Each color must have stock quantity.</small>
+                            </div>
+                            <div id="editColorFieldsContainer">
+                                <!-- Color fields will be dynamically generated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description *</label>
+                            <textarea class="form-control" name="description" id="editProductDescription" rows="3" required maxlength="1000"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lenses</label>
+                            <input type="text" class="form-control" name="lenses" id="editProductLenses" maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Protection</label>
+                            <input type="text" class="form-control" name="protection" id="editProductProtection" maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dimensions</label>
+                            <input type="text" class="form-control" name="dimensions" id="editProductDimensions" maxlength="50">
+                        </div>
+                        <!-- NEW: Featured Product Field -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="is_featured" id="editIsFeatured">
+                            <label class="form-check-label" for="editIsFeatured">
+                                <i class="fas fa-star featured-star"></i> Feature this product on homepage
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProduct()">Update Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Promo Code Modal -->
+    <div class="modal fade" id="addPromoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Promo Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-promo-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Promo Code *</label>
+                                    <input type="text" class="form-control" name="code" required maxlength="50" placeholder="e.g., SUMMER10">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Type *</label>
+                                    <select class="form-select" name="discount_type" required>
+                                        <option value="percentage">Percentage (%)</option>
+                                        <option value="fixed">Fixed Amount (DA)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Discount Value *</label>
+                                    <input type="number" class="form-control" name="discount_value" step="0.01" min="0" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Minimum Order Amount (DA)</label>
+                                    <input type="number" class="form-control" name="min_order_amount" step="0.01" min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Maximum Discount (DA)</label>
+                                    <input type="number" class="form-control" name="max_discount" step="0.01" min="0" placeholder="For percentage discounts only">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Usage Limit</label>
+                                    <input type="number" class="form-control" name="usage_limit" min="0" placeholder="Leave empty for unlimited">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Valid From *</label>
+                                    <input type="datetime-local" class="form-control" name="valid_from" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Valid Until *</label>
+                                    <input type="datetime-local" class="form-control" name="valid_until" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" name="is_active" id="promoActive" checked>
+                            <label class="form-check-label" for="promoActive">Active</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addPromoCode()">Add Promo Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api';
+        let csrfToken = '';
+
+        // Show loading overlay
+        function showLoading() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        // NEW: Color selection management functions
+        function updateColorFields() {
+            const colorCount = parseInt(document.getElementById('colorCount').value) || 1;
+            const container = document.getElementById('colorFieldsContainer');
+            container.innerHTML = '';
+
+            for (let i = 0; i < colorCount; i++) {
+                const colorHtml = `
+                    <div class="color-item" data-index="${i}">
+                        <div class="color-header">
+                            <h6 class="mb-0">Color ${i + 1}</h6>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Color Name *</label>
+                                    <input type="text" class="form-control color-name" name="color_name_${i}" placeholder="e.g., Black, Red, Gold" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Stock Quantity *</label>
+                                    <input type="number" class="form-control color-stock" name="color_stock_${i}" min="0" value="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Image URLs (JSON array) *</label>
+                                    <textarea class="form-control color-images" name="color_images_${i}" rows="2" placeholder='["url1.jpg", "url2.jpg"]' required></textarea>
+                                    <small class="form-text text-muted">Enter image URLs as JSON array for this color</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-images-preview" id="colorPreview_${i}">
+                            <!-- Image previews will be shown here -->
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += colorHtml;
+            }
+        }
+
+        function updateEditColorFields() {
+            const colorCount = parseInt(document.getElementById('editColorCount').value) || 1;
+            const container = document.getElementById('editColorFieldsContainer');
+            container.innerHTML = '';
+
+            for (let i = 0; i < colorCount; i++) {
+                const colorHtml = `
+                    <div class="color-item" data-index="${i}">
+                        <div class="color-header">
+                            <h6 class="mb-0">Color ${i + 1}</h6>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Color Name *</label>
+                                    <input type="text" class="form-control edit-color-name" name="edit_color_name_${i}" placeholder="e.g., Black, Red, Gold" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Stock Quantity *</label>
+                                    <input type="number" class="form-control edit-color-stock" name="edit_color_stock_${i}" min="0" value="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Image URLs (JSON array) *</label>
+                                    <textarea class="form-control edit-color-images" name="edit_color_images_${i}" rows="2" placeholder='["url1.jpg", "url2.jpg"]' required></textarea>
+                                    <small class="form-text text-muted">Enter image URLs as JSON array for this color</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-images-preview" id="editColorPreview_${i}">
+                            <!-- Image previews will be shown here -->
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += colorHtml;
+            }
+        }
+
+        function getColorData(formType = 'add') {
+            const colorCount = parseInt(document.getElementById(formType === 'add' ? 'colorCount' : 'editColorCount').value) || 1;
+            const colors = [];
+
+            for (let i = 0; i < colorCount; i++) {
+                const nameField = document.querySelector(`[name="${formType}_color_name_${i}"]`);
+                const stockField = document.querySelector(`[name="${formType}_color_stock_${i}"]`);
+                const imagesField = document.querySelector(`[name="${formType}_color_images_${i}"]`);
+                
+                if (nameField && stockField && imagesField) {
+                    try {
+                        const name = nameField.value.trim();
+                        const stock = parseInt(stockField.value) || 0;
+                        const images = JSON.parse(imagesField.value);
+                        
+                        if (name && Array.isArray(images)) {
+                            colors.push({
+                                name: name,
+                                stock: stock,
+                                images: images
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing color data:', e);
+                    }
+                }
+            }
+
+            return colors;
+        }
+
+        function populateEditColorFields(availableColors) {
+            const colorCount = availableColors.length;
+            document.getElementById('editColorCount').value = colorCount;
+            updateEditColorFields();
+
+            // Populate color data
+            availableColors.forEach((color, index) => {
+                const nameField = document.querySelector(`[name="edit_color_name_${index}"]`);
+                const stockField = document.querySelector(`[name="edit_color_stock_${index}"]`);
+                const imagesField = document.querySelector(`[name="edit_color_images_${index}"]`);
+                
+                if (nameField && stockField && imagesField) {
+                    nameField.value = color.name;
+                    stockField.value = color.stock || 0;
+                    imagesField.value = JSON.stringify(color.images, null, 2);
+                    
+                    // Show image previews
+                    showColorImagePreviews(color.images, `editColorPreview_${index}`);
+                }
+            });
+        }
+
+        function showColorImagePreviews(imageUrls, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            imageUrls.forEach(url => {
+                if (url.trim()) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.className = 'color-image-preview';
+                    img.alt = 'Color preview';
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                    };
+                    container.appendChild(img);
+                }
+            });
+        }
+
+        // Check authentication using backend
+        async function checkAdminAuth() {
+            showLoading();
+            try {
+                const response = await fetch('/api/admin/check-auth');
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                csrfToken = data.csrf_token || '';
+                return true;
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = 'login.html';
+                return false;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load dashboard stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/stats?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const stats = await response.json();
+                
+                document.getElementById('total-orders').textContent = stats.total_orders;
+                document.getElementById('pending-orders').textContent = stats.pending_orders;
+                document.getElementById('total-revenue').textContent = `DA ${stats.total_revenue.toLocaleString()}`;
+                document.getElementById('total-products').textContent = stats.total_products || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // ========== ORDER MANAGEMENT FUNCTIONS ==========
+
+        // Load all orders
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/orders?t=${Date.now()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const orders = await response.json();
+                
+                displayOrders(orders);
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('orders-list').innerHTML = '<div class="alert alert-danger">Error loading orders. Please refresh the page.</div>';
+            }
+        }
+
+        // Display orders
+        function displayOrders(orders) {
+            const container = document.getElementById('orders-list');
+            
+            if (!orders || orders.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No orders yet</div>';
+                return;
+            }
+            
+            let ordersHTML = '';
+            
+            orders.forEach(order => {
+                const statusClass = `status-${order.status}`;
+                const itemsList = order.items && order.items.length > 0 
+                    ? order.items.map(item => {
+                        let itemText = `${item.name} (x${item.quantity})`;
+                        // NEW: Show selected color if available
+                        if (item.selected_color) {
+                            itemText += ` - Color: ${item.selected_color}`;
+                        }
+                        return itemText;
+                    }).join(', ')
+                    : 'No items';
+
+                ordersHTML += `
+                    <div class="order-card" id="order-${order.orderId}">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <strong>Order #${order.orderId}</strong>
+                                <div class="small text-muted">${new Date(order.createdAt).toLocaleDateString()}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div><strong>${order.customerName}</strong></div>
+                                <div class="small">${order.phoneNumber}</div>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge ${statusClass}">${order.status}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <strong>DA ${order.total.toLocaleString()}</strong>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select form-select-sm" onchange="updateOrderStatus('${order.orderId}', this.value)">
+                                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                                    <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteOrder('${order.orderId}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2 small">
+                            <strong>Items:</strong> ${itemsList}
+                        </div>
+                        <div class="small">
+                            <strong>Address:</strong> ${order.address}, ${order.wilaya}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = ordersHTML;
+        }
+
+        // Update order status
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ status: newStatus, csrf_token: csrfToken })
+                });
+                
+                if (response.ok) {
+                    loadStats();
+                } else {
+                    console.error('Failed to update status');
+                    if (response.status === 403) {
+                        alert('CSRF token validation failed. Please refresh the page.');
+                        location.reload();
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // Delete order
+        async function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+
+            const orderElement = document.getElementById(`order-${orderId}`);
+            if (orderElement) {
+                orderElement.style.opacity = '0';
+                setTimeout(() => orderElement.remove(), 300);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/orders/${orderId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                if (response.ok) {
+                    loadStats();
+                    
+                    setTimeout(() => {
+                        const ordersList = document.getElementById('orders-list');
+                        if (ordersList && ordersList.children.length === 0) {
+                            ordersList.innerHTML = '<div class="alert alert-info">No orders yet</div>';
+                        }
+                    }, 350);
+                } else {
+                    console.error('Server failed to delete');
+                    if (response.status === 403) {
+                        alert('CSRF token validation failed. Please refresh the page.');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete order');
+                        location.reload();
+                    }
+                }
+            } catch (error) {
+                console.error('Network error deleting order:', error);
+            }
+        }
+
+        // ========== PRODUCT MANAGEMENT FUNCTIONS ==========
+
+        // Load all products
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/products`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const products = await response.json();
+                
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('products-list').innerHTML = '<div class="alert alert-danger">Error loading products. Please refresh the page.</div>';
+            }
+        }
+
+        // Display products
+        function displayProducts(products) {
+            const container = document.getElementById('products-list');
+            
+            if (!products || products.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No products found</div>';
+                return;
+            }
+            
+            let productsHTML = `
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Price</th>
+                                <th>Discount</th>
+                                <th>Colors</th>
+                                <th>Total Stock</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            products.forEach(product => {
+                const totalQuantity = product.total_quantity || 0; // UPDATED: Now using color-only total
+                const quantityClass = totalQuantity === 0 ? 'quantity-zero' : (totalQuantity <= 5 ? 'quantity-low' : '');
+                const hasActiveDiscount = product.has_active_discount;
+                const colorCount = product.available_colors ? product.available_colors.length : 1;
+                
+                // Format price display with discount
+                let priceHTML = '';
+                if (hasActiveDiscount && product.discount_price) {
+                    const discountPercent = Math.round((1 - product.discount_price / product.price) * 100);
+                    priceHTML = `
+                        <div>
+                            <span class="original-price">DA ${product.price.toLocaleString()}</span>
+                            <span class="discount-price">DA ${product.discount_price.toLocaleString()}</span>
+                            <span class="discount-badge">-${discountPercent}%</span>
+                        </div>
+                    `;
+                } else {
+                    priceHTML = `<strong>DA ${product.price.toLocaleString()}</strong>`;
+                }
+                
+                // NEW: Featured star display
+                const featuredStar = product.is_featured ? 
+                    '<i class="fas fa-star featured-star"></i>' : 
+                    '<i class="far fa-star text-muted"></i>';
+                
+                productsHTML += `
+                    <tr id="product-${product.id}">
+                        <td>
+                            <strong>${product.title}</strong>
+                            <div class="small text-muted">${product.description.substring(0, 50)}...</div>
+                        </td>
+                        <td>${product.brand}</td>
+                        <td>${product.model}</td>
+                        <td>
+                            <span class="badge ${product.type === 'sunglasses' ? 'bg-warning' : 'bg-info'}">
+                                ${product.type}
+                            </span>
+                        </td>
+                        <td>${priceHTML}</td>
+                        <td>
+                            ${hasActiveDiscount ? 
+                                '<span class="badge bg-success">Active</span>' : 
+                                '<span class="badge bg-secondary">Inactive</span>'
+                            }
+                        </td>
+                        <td>
+                            <span class="badge ${colorCount > 1 ? 'bg-primary' : 'bg-secondary'}">
+                                ${colorCount} ${colorCount === 1 ? 'Color' : 'Colors'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="${quantityClass}">${totalQuantity}</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning featured-star-btn" onclick="toggleFeatured('${product.id}', ${!product.is_featured})" title="${product.is_featured ? 'Remove from homepage' : 'Feature on homepage'}">
+                                ${featuredStar}
+                            </button>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editProduct('${product.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            productsHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = productsHTML;
+        }
+
+        // NEW: Toggle featured status
+        async function toggleFeatured(productId, newFeaturedStatus) {
+            try {
+                const response = await fetch(`${API_BASE}/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        is_featured: newFeaturedStatus
+                    })
+                });
+
+                if (response.ok) {
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    alert('Error updating featured status: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error toggling featured status:', error);
+                alert('Error updating featured status');
+            }
+        }
+
+        // Show add product modal
+        function showAddProductModal() {
+            document.getElementById('add-product-form').reset();
+            document.getElementById('colorCount').value = 1;
+            updateColorFields();
+            const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
+            modal.show();
+        }
+
+        // Add new product
+        // Add new product
+async function addProduct() {
+    const form = document.getElementById('add-product-form');
+    const formData = new FormData(form);
+    
+    // Get color data PROPERLY
+    const availableColors = [];
+    const colorCount = parseInt(document.getElementById('colorCount').value) || 1;
+    
+    for (let i = 0; i < colorCount; i++) {
+        const nameField = document.querySelector(`[name="color_name_${i}"]`);
+        const stockField = document.querySelector(`[name="color_stock_${i}"]`);
+        const imagesField = document.querySelector(`[name="color_images_${i}"]`);
+        
+        if (nameField && stockField && imagesField) {
+            try {
+                const colorName = nameField.value.trim();
+                const stock = parseInt(stockField.value) || 0;
+                const images = imagesField.value.trim();
+                
+                if (colorName && images) {
+                    // Parse images JSON string into array
+                    let imagesArray = [];
+                    try {
+                        imagesArray = JSON.parse(images);
+                        if (!Array.isArray(imagesArray)) {
+                            alert(`Error: Color ${i+1} images must be a valid JSON array format`);
+                            return;
+                        }
+                    } catch (e) {
+                        alert(`Error: Color ${i+1} images must be in valid JSON array format (e.g., ["url1.jpg", "url2.jpg"])`);
+                        return;
+                    }
+                    
+                    availableColors.push({
+                        name: colorName,
+                        stock: stock,
+                        images: imagesArray
+                    });
+                } else {
+                    alert(`Please fill all fields for Color ${i+1}`);
+                    return;
+                }
+            } catch (e) {
+                console.error('Error processing color data:', e);
+                alert(`Error processing color ${i+1} data: ${e.message}`);
+                return;
+            }
+        }
+    }
+    
+    // Validate at least one color
+    if (availableColors.length === 0) {
+        alert("At least one color is required");
+        return;
+    }
+    
+    const productData = {
+        id: formData.get('id'),
+        title: formData.get('title'),
+        price: parseFloat(formData.get('price')),
+        brand: formData.get('brand'),
+        description: formData.get('description'),
+        model: formData.get('model'),
+        type: formData.get('type'),
+        frame_shape: formData.get('frame_shape'),
+        frame_material: formData.get('frame_material'),
+        frame_color: formData.get('frame_color'),
+        lenses: formData.get('lenses'),
+        protection: formData.get('protection'),
+        dimensions: formData.get('dimensions'),
+        // NEW: Discount pricing fields
+        discount_price: formData.get('discount_price') ? parseFloat(formData.get('discount_price')) : null,
+        discount_active: formData.get('discount_active') === 'on',
+        discount_start: formData.get('discount_start') || null,
+        discount_end: formData.get('discount_end') || null,
+        // NEW: Color selection feature (now required) - PROPERLY FORMATTED
+        available_colors: availableColors,
+        // NEW: Featured product flag
+        is_featured: formData.get('is_featured') === 'on'
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify(productData)
+        });
+
+        if (response.ok) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+            modal.hide();
+            loadProducts();
+            loadStats();
+            alert('Product added successfully!');
+        } else {
+            const error = await response.json();
+            alert('Error adding product: ' + error.error);
+        }
+    } catch (error) {
+        console.error('Error adding product:', error);
+        alert('Error adding product: ' + error.message);
+    }
+}
+
+        // Edit product
+        async function editProduct(productId) {
+            try {
+                const response = await fetch(`${API_BASE}/products/${productId}`);
+                if (!response.ok) throw new Error('Product not found');
+                
+                const product = await response.json();
+                
+                // Populate the edit form
+                document.getElementById('editProductId').value = product.id;
+                document.getElementById('editProductTitle').value = product.title;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductBrand').value = product.brand;
+                document.getElementById('editProductDescription').value = product.description;
+                document.getElementById('editProductModel').value = product.model;
+                document.getElementById('editProductType').value = product.type;
+                document.getElementById('editProductFrameShape').value = product.frame_shape || '';
+                document.getElementById('editProductFrameMaterial').value = product.frame_material || '';
+                document.getElementById('editProductFrameColor').value = product.frame_color || '';
+                document.getElementById('editProductLenses').value = product.lenses || '';
+                document.getElementById('editProductProtection').value = product.protection || '';
+                document.getElementById('editProductDimensions').value = product.dimensions || '';
+                
+                // NEW: Populate discount pricing fields
+                document.getElementById('editProductDiscountPrice').value = product.discount_price || '';
+                document.getElementById('editDiscountActive').checked = product.discount_active || false;
+                
+                // Format dates for datetime-local input
+                if (product.discount_start) {
+                    const startDate = new Date(product.discount_start);
+                    document.getElementById('editDiscountStart').value = startDate.toISOString().slice(0, 16);
+                } else {
+                    document.getElementById('editDiscountStart').value = '';
+                }
+                
+                if (product.discount_end) {
+                    const endDate = new Date(product.discount_end);
+                    document.getElementById('editDiscountEnd').value = endDate.toISOString().slice(0, 16);
+                } else {
+                    document.getElementById('editDiscountEnd').value = '';
+                }
+                
+                // NEW: Populate color selection fields
+                const availableColors = product.available_colors || [];
+                populateEditColorFields(availableColors);
+                
+                // NEW: Populate featured field
+                document.getElementById('editIsFeatured').checked = product.is_featured || false;
+                
+                // Show the edit modal
+                const modal = new bootstrap.Modal(document.getElementById('editProductModal'));
+                modal.show();
+                
+            } catch (error) {
+                console.error('Error loading product for edit:', error);
+                alert('Error loading product details');
+            }
+        }
+
+        // Update product
+        async function updateProduct() {
+            const form = document.getElementById('edit-product-form');
+            const productId = document.getElementById('editProductId').value;
+            
+            // Get color data
+            const availableColors = getColorData('edit');
+            
+            const productData = {
+                title: document.getElementById('editProductTitle').value,
+                price: parseFloat(document.getElementById('editProductPrice').value),
+                brand: document.getElementById('editProductBrand').value,
+                description: document.getElementById('editProductDescription').value,
+                model: document.getElementById('editProductModel').value,
+                type: document.getElementById('editProductType').value,
+                frame_shape: document.getElementById('editProductFrameShape').value,
+                frame_material: document.getElementById('editProductFrameMaterial').value,
+                frame_color: document.getElementById('editProductFrameColor').value,
+                lenses: document.getElementById('editProductLenses').value,
+                protection: document.getElementById('editProductProtection').value,
+                dimensions: document.getElementById('editProductDimensions').value,
+                // NEW: Discount pricing fields
+                discount_price: document.getElementById('editProductDiscountPrice').value ? parseFloat(document.getElementById('editProductDiscountPrice').value) : null,
+                discount_active: document.getElementById('editDiscountActive').checked,
+                discount_start: document.getElementById('editDiscountStart').value || null,
+                discount_end: document.getElementById('editDiscountEnd').value || null,
+                // NEW: Color selection feature (now required)
+                available_colors: availableColors,
+                // NEW: Featured product flag
+                is_featured: document.getElementById('editIsFeatured').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+                    modal.hide();
+                    loadProducts();
+                    alert('Product updated successfully!');
+                } else {
+                    const error = await response.json();
+                    alert('Error updating product: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error updating product:', error);
+                alert('Error updating product');
+            }
+        }
+
+        // Delete product
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                if (response.ok) {
+                    document.getElementById(`product-${productId}`).remove();
+                    loadStats();
+                    alert('Product deleted successfully!');
+                    
+                    // Check if no products left
+                    setTimeout(() => {
+                        const productsList = document.getElementById('products-list');
+                        if (productsList && productsList.querySelector('tbody').children.length === 0) {
+                            productsList.innerHTML = '<div class="alert alert-info">No products found</div>';
+                        }
+                    }, 100);
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting product: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Error deleting product');
+            }
+        }
+
+        // ========== PROMO CODE MANAGEMENT FUNCTIONS ==========
+
+        // Load all promo codes
+        async function loadPromoCodes() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/promo-codes`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const promoCodes = await response.json();
+                
+                displayPromoCodes(promoCodes);
+            } catch (error) {
+                console.error('Error loading promo codes:', error);
+                document.getElementById('promo-codes-list').innerHTML = '<div class="alert alert-danger">Error loading promo codes. Please refresh the page.</div>';
+            }
+        }
+
+        // Display promo codes
+        function displayPromoCodes(promoCodes) {
+            const container = document.getElementById('promo-codes-list');
+            
+            if (!promoCodes || promoCodes.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No promo codes found</div>';
+                return;
+            }
+            
+            let promosHTML = `
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Discount</th>
+                                <th>Min Order</th>
+                                <th>Usage</th>
+                                <th>Valid Until</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            promoCodes.forEach(promo => {
+                const now = new Date();
+                const validUntil = new Date(promo.valid_until);
+                const isExpired = validUntil < now;
+                const statusClass = isExpired ? 'promo-expired' : (promo.is_active ? 'promo-active' : 'promo-inactive');
+                const statusText = isExpired ? 'Expired' : (promo.is_active ? 'Active' : 'Inactive');
+                
+                const discountText = promo.discount_type === 'percentage' 
+                    ? `${promo.discount_value}%${promo.max_discount ? ` (max DA ${promo.max_discount})` : ''}`
+                    : `DA ${promo.discount_value}`;
+                
+                const usageText = promo.usage_limit 
+                    ? `${promo.used_count}/${promo.usage_limit}`
+                    : `${promo.used_count} used`;
+                
+                promosHTML += `
+                    <tr id="promo-${promo.id}" class="${statusClass}">
+                        <td><strong>${promo.code}</strong></td>
+                        <td>${discountText}</td>
+                        <td>DA ${promo.min_order_amount}</td>
+                        <td>${usageText}</td>
+                        <td>${new Date(promo.valid_until).toLocaleDateString()}</td>
+                        <td>
+                            <span class="badge ${isExpired ? 'bg-warning' : (promo.is_active ? 'bg-success' : 'bg-secondary')}">
+                                ${statusText}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary" onclick="togglePromoCode(${promo.id})">
+                                    <i class="fas ${promo.is_active ? 'fa-pause' : 'fa-play'}"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deletePromoCode(${promo.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            promosHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = promosHTML;
+        }
+
+        // Show add promo modal
+        function showAddPromoModal() {
+            document.getElementById('add-promo-form').reset();
+            
+            // Set default dates
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 30);
+            
+            document.querySelector('input[name="valid_from"]').value = now.toISOString().slice(0, 16);
+            document.querySelector('input[name="valid_until"]').value = tomorrow.toISOString().slice(0, 16);
+            
+            const modal = new bootstrap.Modal(document.getElementById('addPromoModal'));
+            modal.show();
+        }
+
+        // Add new promo code
+        async function addPromoCode() {
+            const form = document.getElementById('add-promo-form');
+            const formData = new FormData(form);
+            
+            const promoData = {
+                code: formData.get('code').toUpperCase(),
+                discount_type: formData.get('discount_type'),
+                discount_value: parseFloat(formData.get('discount_value')),
+                min_order_amount: parseFloat(formData.get('min_order_amount') || 0),
+                max_discount: formData.get('max_discount') ? parseFloat(formData.get('max_discount')) : null,
+                usage_limit: formData.get('usage_limit') ? parseInt(formData.get('usage_limit')) : null,
+                valid_from: new Date(formData.get('valid_from')).toISOString(),
+                valid_until: new Date(formData.get('valid_until')).toISOString(),
+                is_active: formData.get('is_active') === 'on'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/promo-codes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify(promoData)
+                });
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addPromoModal'));
+                    modal.hide();
+                    loadPromoCodes();
+                    alert('Promo code added successfully!');
+                } else {
+                    const error = await response.json();
+                    alert('Error adding promo code: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error adding promo code:', error);
+                alert('Error adding promo code');
+            }
+        }
+
+        // Toggle promo code status
+        async function togglePromoCode(promoId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/promo-codes/${promoId}/toggle`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                if (response.ok) {
+                    loadPromoCodes();
+                } else {
+                    const error = await response.json();
+                    alert('Error toggling promo code: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error toggling promo code:', error);
+                alert('Error toggling promo code');
+            }
+        }
+
+        // Delete promo code
+        async function deletePromoCode(promoId) {
+            if (!confirm('Are you sure you want to delete this promo code? This action cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/promo-codes/${promoId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+
+                if (response.ok) {
+                    document.getElementById(`promo-${promoId}`).remove();
+                    alert('Promo code deleted successfully!');
+                    
+                    // Check if no promos left
+                    setTimeout(() => {
+                        const promosList = document.getElementById('promo-codes-list');
+                        if (promosList && promosList.querySelector('tbody').children.length === 0) {
+                            promosList.innerHTML = '<div class="alert alert-info">No promo codes found</div>';
+                        }
+                    }, 100);
+                } else {
+                    const error = await response.json();
+                    alert('Error deleting promo code: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error deleting promo code:', error);
+                alert('Error deleting promo code');
+            }
+        }
+
+        // ========== BACKUP MANAGEMENT FUNCTIONS ==========
+
+        // Load all backups
+        async function loadBackups() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/backup/list`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                displayBackups(data);
+                updateBackupStats(data);
+            } catch (error) {
+                console.error('Error loading backups:', error);
+                document.getElementById('backups-list').innerHTML = '<div class="alert alert-danger">Error loading backups. Please refresh the page.</div>';
+            }
+        }
+
+        // Display backups
+        function displayBackups(data) {
+            const container = document.getElementById('backups-list');
+            const backups = data.backups || [];
+            
+            if (backups.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No backups found. Create your first backup!</div>';
+                return;
+            }
+            
+            let backupsHTML = `
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            backups.forEach(backup => {
+                const fileSize = (backup.size / (1024 * 1024)).toFixed(2);
+                const createdDate = new Date(backup.created).toLocaleString();
+                const typeBadge = backup.type.includes('manual') ? 'bg-primary' : 
+                                 backup.type.includes('30min') ? 'bg-success' : 'bg-info';
+                
+                backupsHTML += `
+                    <tr id="backup-${backup.filename}">
+                        <td><strong>${backup.filename}</strong></td>
+                        <td>
+                            <span class="badge ${typeBadge}">
+                                ${backup.type.replace('auto_', '').replace('_', ' ')}
+                            </span>
+                        </td>
+                        <td>${fileSize} MB</td>
+                        <td>${createdDate}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-success" onclick="downloadBackup('${backup.filename}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="restoreBackup('${backup.filename}')">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteBackup('${backup.filename}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            backupsHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = backupsHTML;
+        }
+
+        // Update backup statistics
+        function updateBackupStats(data) {
+            const backups = data.backups || [];
+            const totalSize = backups.reduce((sum, backup) => sum + backup.size, 0);
+            const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+            
+            document.getElementById('total-backups').textContent = backups.length;
+            document.getElementById('storage-used').textContent = `${totalSizeMB} MB`;
+            
+            if (backups.length > 0) {
+                const lastBackup = backups[0];
+                document.getElementById('last-backup-time').textContent = new Date(lastBackup.created).toLocaleString();
+            }
+            
+            // Calculate next backup time (30 minutes from now)
+            const nextBackup = new Date(Date.now() + 30 * 60 * 1000);
+            document.getElementById('next-backup-time').textContent = nextBackup.toLocaleTimeString();
+        }
+
+        // Create manual backup
+        async function createBackup() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/backup/create`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Backup created successfully!');
+                    loadBackups();
+                } else {
+                    alert('Error creating backup: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Error creating backup');
+            }
+        }
+
+        // Download backup
+        function downloadBackup(filename) {
+            window.open(`${API_BASE}/admin/backup/download/${filename}`, '_blank');
+        }
+
+        // Restore backup
+        async function restoreBackup(filename) {
+            if (!confirm('WARNING: This will restore the database from this backup. This action cannot be undone. Continue?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/backup/restore`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ filename: filename })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Database restored successfully! The page will reload.');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    alert('Error restoring backup: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error restoring backup:', error);
+                alert('Error restoring backup');
+            }
+        }
+
+        // Delete backup
+        async function deleteBackup(filename) {
+            if (!confirm('Are you sure you want to delete this backup? This action cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/backup/delete/${filename}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Backup deleted successfully!');
+                    loadBackups();
+                } else {
+                    alert('Error deleting backup: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting backup:', error);
+                alert('Error deleting backup');
+            }
+        }
+
+        // Cleanup old backups
+        async function cleanupBackups() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/backup/cleanup`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`Cleanup completed: ${result.message}`);
+                    loadBackups();
+                } else {
+                    alert('Error during cleanup: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error during cleanup:', error);
+                alert('Error during cleanup');
+            }
+        }
+
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', async function() {
+            try {
+                await fetch('/api/admin/logout', { 
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken
+                    }
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Initialize admin panel
+        async function initializeAdmin() {
+            const isAuthenticated = await checkAdminAuth();
+            if (!isAuthenticated) return;
+
+            // Load initial data
+            await loadStats();
+            await loadOrders();
+            
+            // Set up tab change listeners
+            document.getElementById('products-tab').addEventListener('click', loadProducts);
+            document.getElementById('promo-tab').addEventListener('click', loadPromoCodes);
+            document.getElementById('backup-tab').addEventListener('click', loadBackups);
+            
+            // Refresh data every 30 seconds
+            setInterval(() => {
+                loadStats();
+                const activeTab = document.querySelector('#adminTabs .nav-link.active').id;
+                if (activeTab === 'orders-tab') {
+                    loadOrders();
+                } else if (activeTab === 'products-tab') {
+                    loadProducts();
+                } else if (activeTab === 'promo-tab') {
+                    loadPromoCodes();
+                } else if (activeTab === 'backup-tab') {
+                    loadBackups();
+                }
+            }, 30000);
+        }
+
+        // Start the admin panel
+        initializeAdmin();
+    </script>
+</body>
+</html>
